@@ -6,75 +6,108 @@ import (
 	"github.com/roman-mazur/bood"
 	"path"
 )
+
 var (
-	pctx = blueprint.NewPackageContext("github.com/roman-mazur/bood/gomodule")
-	goBuild = pctx.StaticRule("binaryBuild", blueprint.RuleParams{
-		Command:     "cd $workDir && go build -o $outputPath $pkg",
-		Description: "build go command $pkg",
-	}, "workDir", "outputPath", "pkg")
-	goVendor = pctx.StaticRule("vendor", blueprint.RuleParams{
-		Command:     "cd $workDir && go mod vendor",
-		Description: "vendor dependencies of $name",
-	}, "workDir", "name")
-	)
-type testedBinaryModule struct {
+	goTest = pctx.StaticRule("binaryTest", blueprint.RuleParams{
+		Command:          "cd $workDir && go test $pkg > $testFile",
+		Description:      "test go package $pkg",
+	}, "workDir", "pkg", "testFile")
+)
+
+type goTestModuleType struct {
 	blueprint.SimpleName
+
 	properties struct {
-		Pkg string
-		Srcs []string
-		SrcsExclude []string
+		Pkg         string
+		TestPkg		string
+		Srcs        []string
+		TestSrcs    []string
 		VendorFirst bool
-		Deps []string
+		Deps        []string
 	}
 }
 
-func (tb *testedBinaryModule) GenerateBuildActions(ctx blueprint.ModuleContext) {
+func (gt *goTestModuleType) DynamicDependencies(blueprint.DynamicDependerModuleContext) []string {
+	return gt.properties.Deps
+}
+
+func (gt *goTestModuleType) GenerateBuildActions(ctx blueprint.ModuleContext) {
 	name := ctx.ModuleName()
 	config := bood.ExtractConfig(ctx)
-	config.Debug.Printf("Adding build actions for go binary module '%s'", name)
+	config.Info.Printf("Adding build & test actions for go binary module '%s'", name)
 
 	outputPath := path.Join(config.BaseOutputDir, "bin", name)
+	testsPath := path.Join(config.BaseOutputDir, "tests", "test.txt")
 
-	var inputs []string
-	inputErors := false
-	for _, src := range tb.properties.Srcs {
-		if matches, err := ctx.GlobWithDeps(src, tb.properties.SrcsExclude); err == nil {
-			inputs = append(inputs, matches...)
+	var buildInputs []string
+	var testInputs []string
+	inputErrors := false
+
+	for _, src := range gt.properties.Srcs {
+		if matches, err := ctx.GlobWithDeps(src, gt.properties.TestSrcs); err == nil {
+			buildInputs = append(buildInputs, matches...)
 		} else {
 			ctx.PropertyErrorf("srcs", "Cannot resolve files that match pattern %s", src)
-			inputErors = true
+			inputErrors = true
 		}
 	}
-	if inputErors {
+
+	for _, src := range gt.properties.TestSrcs {
+		if matches, err := ctx.GlobWithDeps(src, nil); err == nil {
+			testInputs = append(buildInputs, matches...)
+		} else {
+			ctx.PropertyErrorf("testSrcs", "Cannot resolve files that match pattern %s", src)
+			inputErrors = true
+		}
+	}
+
+	if inputErrors {
 		return
 	}
 
-	if tb.properties.VendorFirst {
+	if gt.properties.VendorFirst {
 		vendorDirPath := path.Join(ctx.ModuleDir(), "vendor")
 		ctx.Build(pctx, blueprint.BuildParams{
 			Description: fmt.Sprintf("Vendor dependencies of %s", name),
 			Rule:        goVendor,
 			Outputs:     []string{vendorDirPath},
-			Implicits:   []string{path.Join(ctx.ModuleDir(), "go.mod")},
+			Implicits:   []string{path.Join(ctx.ModuleDir(), "../go.mod")},
 			Optional:    true,
 			Args: map[string]string{
 				"workDir": ctx.ModuleDir(),
 				"name":    name,
 			},
 		})
-		inputs = append(inputs, vendorDirPath)
+		buildInputs = append(buildInputs, vendorDirPath)
+		testInputs = append(testInputs, vendorDirPath)
 	}
 
 	ctx.Build(pctx, blueprint.BuildParams{
 		Description: fmt.Sprintf("Build %s as Go binary", name),
 		Rule:        goBuild,
 		Outputs:     []string{outputPath},
-		Implicits:   inputs,
+		Implicits:   buildInputs,
 		Args: map[string]string{
 			"outputPath": outputPath,
 			"workDir":    ctx.ModuleDir(),
-			"pkg":        tb.properties.Pkg,
+			"pkg":        gt.properties.Pkg,
 		},
 	})
 
+	ctx.Build(pctx, blueprint.BuildParams{
+		Description: fmt.Sprintf("Test %s as Go binary", name),
+		Rule: goTest,
+		Outputs: []string{testsPath},
+		Implicits: testInputs,
+		Args: map[string]string{
+			"workDir": ctx.ModuleDir(),
+			"pkg": gt.properties.TestPkg,
+			"testFile": testsPath,
+		},
+	})
+}
+
+func SimpleTestFactory() (blueprint.Module, []interface{}) {
+	testType := &goTestModuleType{}
+	return testType, []interface{}{&testType.SimpleName.Properties, &testType.properties}
 }
