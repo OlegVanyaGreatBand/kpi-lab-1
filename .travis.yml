@@ -11,4 +11,7 @@ before_install:
 script:
   - go build ./build/cmd/bood
   - cd build
-  - ../bood
+  - sudo mv bood /usr/local/bin/
+  - bood
+  - cd ../example
+  - bood
