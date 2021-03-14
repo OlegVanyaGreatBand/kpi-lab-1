@@ -16,3 +16,11 @@ script:
   - cd ../examples
   # do to each example subdirectory and execute bood
   - find -mindepth 1 -maxdepth 1 -type d -exec bash -c 'cd ${1#./} && bood' -- '{}' \;
+
+deploy:
+  provider: releases
+  api_key: $OAUTH_TOKEN
+  file: "/usr/local/bin/bood"
+  skip_cleanup: true
+  on:
+    tags: true
