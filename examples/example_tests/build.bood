@@ -1,5 +1,5 @@
 go_tested_binary {
-    name: "example",
+    name: "example_test",
     pkg: ".",
     testPkg: "./...",
     srcs:  ["**/*.go"],
