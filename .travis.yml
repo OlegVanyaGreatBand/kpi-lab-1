@@ -10,8 +10,8 @@ before_install:
 
 script:
   - go build ./build/cmd/bood
-  - cd build
   - sudo mv bood /usr/local/bin/
+  - cd build
   - bood
   - cd ../example
   - bood
