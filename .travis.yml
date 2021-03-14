@@ -14,7 +14,7 @@ script:
   - cd build
   - bood
   - cd ../examples
-  # do to each example subdirectory and execute bood
+  # go to each example subdirectory and execute bood
   - find -mindepth 1 -maxdepth 1 -type d -exec bash -c 'cd ${1#./} && bood' -- '{}' \;
 
 deploy:
