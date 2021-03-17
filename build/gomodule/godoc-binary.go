@@ -9,7 +9,7 @@ import (
 
 var (
 	goDoc = pctx.StaticRule("doc", blueprint.RuleParams{
-		Command:          "cd $workDir && godoc -html $pkg > $htmlFile",
+		Command:          "cd $workDir && go doc $pkg > $htmlFile",
 		Description:      "godoc $pkg",
 	}, "workDir", "pkg", "htmlFile")
 )
@@ -83,6 +83,6 @@ func (gt *goDocModuleType) GenerateBuildActions(ctx blueprint.ModuleContext) {
 }
 
 func SimpleDocFactory() (blueprint.Module, []interface{}) {
-	DocType := &goTestModuleType{}
+	DocType := &goDocModuleType{}
 	return DocType, []interface{}{&DocType.SimpleName.Properties, &DocType.properties}
 }
