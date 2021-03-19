@@ -24,7 +24,6 @@ func NewContext() *blueprint.Context {
 	ctx.RegisterModuleType("go_doc", gomodule.SimpleDocFactory)
 	return ctx
 }
-
 func main() {
 	flag.Parse()
 
