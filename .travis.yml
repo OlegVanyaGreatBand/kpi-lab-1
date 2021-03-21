@@ -13,9 +13,13 @@ script:
   - sudo mv bood /usr/local/bin/
   - cd build
   - bood
+  - echo "TEST RESULTS:"
+  - cat out/tests/test.txt
+  - echo "DOCS:"
+  - cat out/docs/my-docs.txt
   - cd ../examples
   # go to each example subdirectory and execute bood
-  - find -mindepth 1 -maxdepth 1 -type d -exec bash -c 'cd ${1#./} && bood' -- '{}' +
+  - find -mindepth 1 -maxdepth 1 -type d -exec bash -c 'echo "RUNNING ${1#./}"; cd ${1#./} && bood' -- '{}' \;
 
 deploy:
   provider: releases

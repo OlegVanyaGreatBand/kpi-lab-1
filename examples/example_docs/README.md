@@ -7,18 +7,19 @@ From this directory, try the following commands:
 
 ```
 $ bood
-INFO 2021/03/21 11:24:53 Adding build & test actions for go binary module 'example_godoc'
-INFO 2021/03/21 11:24:53 Ninja build file is generated at out/build.ninja
-INFO 2021/03/21 11:24:53 Starting the build now
-[1/1] Build example_godoc as Go binary
+INFO 2021/03/21 13:32:09 Adding doc actions for go module 'example_godoc'
+INFO 2021/03/21 13:32:09 Ninja build file is generated at out/build.ninja
+INFO 2021/03/21 13:32:09 Starting the build now
+[1/1] Generating docs for example_godoc
 ```
+
 Docs stored in file `out/docs/my-docs.txt`
 
 When tests have succeed, nothing to do anymore:
 ```
 $ bood
-INFO 2021/03/21 11:35:24 Adding build & test actions for go binary module 'example_test'
-INFO 2021/03/21 11:35:24 Ninja build file is generated at out/build.ninja
-INFO 2021/03/21 11:35:24 Starting the build now
+INFO 2021/03/21 13:32:30 Adding doc actions for go module 'example_godoc'
+INFO 2021/03/21 13:32:30 Ninja build file is generated at out/build.ninja
+INFO 2021/03/21 13:32:30 Starting the build now
 ninja: no work to do.
 ```

@@ -47,9 +47,6 @@ func TestSimpleDocFactory(t *testing.T) {
 		if !strings.Contains(text, " test-src.go") {
 			t.Errorf("Generated ninja file does not have source dependency")
 		}
-		//if !strings.Contains(text, "build vendor: g.gomodule.vendor | ../go.mod") {
-		//	t.Errorf("Generated ninja file does not have vendor build rule")
-		//}
 		if !strings.Contains(text, "build out/docs/my-docs.txt: g.gomodule.doc") {
 			t.Errorf("Generated ninja file does not have test doc rule")
 		}

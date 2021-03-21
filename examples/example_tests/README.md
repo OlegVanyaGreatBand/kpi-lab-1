@@ -12,7 +12,7 @@ INFO 2021/03/08 10:27:43 Starting the build now
 [2/2] Test example as Go binary
 ```
 
-Every second build will fail
+When test fails:
 
 ```
 $ bood
