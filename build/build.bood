@@ -5,3 +5,8 @@ go_tested_binary {
     srcs:  ["**/*.go", "../go.mod"],
     testSrcs: ["**/*_test.go"]
 }
+go_doc {
+ name: "godoc",
+ pkg: "github.com/OlegVanyaGreatBand/kpi-lab-1/build/gomodule",
+ srcs: ["**/*.go"]
+}

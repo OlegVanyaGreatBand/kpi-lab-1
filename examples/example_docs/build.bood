@@ -1,0 +1,5 @@
+go_doc {
+ name: "example_godoc",
+ pkg: ".",
+ srcs: ["**/*.go"]
+}
