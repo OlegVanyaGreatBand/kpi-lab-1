@@ -9,7 +9,7 @@ import (
 
 var (
 	goDoc = pctx.StaticRule("doc", blueprint.RuleParams{
-		Command:          "cd $workDir && go doc $pkg > $htmlFile",
+		Command:          "cd $workDir && go doc -all -u $pkg > $htmlFile",
 		Description:      "godoc $pkg",
 	},   "workDir","pkg", "htmlFile")
 )
@@ -35,7 +35,7 @@ func (gd *goDocModuleType) GenerateBuildActions(ctx blueprint.ModuleContext) {
 	name := ctx.ModuleName()
 	config := bood.ExtractConfig(ctx)
 	config.Info.Printf("Adding build & test actions for go binary module '%s'", name)
-	outputPath := path.Join(config.BaseOutputDir, "docs", "my-docs.html")
+	outputPath := path.Join(config.BaseOutputDir, "docs", "my-docs.txt")
 	var buildInputs []string
 	inputErrors := false
 
