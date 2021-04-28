@@ -14,7 +14,7 @@ script:
   - cd build
   - bood
   - echo "TEST RESULTS:"
-  - cat out/tests/test.txt
+  - find ./out/reports/ -type f -print -exec cat {} \;
   - echo "DOCS:"
   - cat out/docs/my-docs.txt
   - cd ../examples
