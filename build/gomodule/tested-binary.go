@@ -38,7 +38,7 @@ func (gt *goTestModuleType) GenerateBuildActions(ctx blueprint.ModuleContext) {
 	config.Info.Printf("Adding build & test actions for go binary module '%s'", name)
 
 	outputPath := path.Join(config.BaseOutputDir, "bin", name)
-	testsPath := path.Join(config.BaseOutputDir, "tests", "test.txt")
+	testsPath := path.Join(config.BaseOutputDir, "reports", name, "test.txt")
 
 	var buildInputs []string
 	var testInputs []string

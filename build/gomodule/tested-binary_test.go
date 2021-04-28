@@ -52,10 +52,10 @@ func TestSimpleTestFactory(t *testing.T) {
 		if !strings.Contains(text, "build vendor: g.gomodule.vendor | ../go.mod") {
 			t.Errorf("Generated ninja file does not have vendor build rule")
 		}
-		if !strings.Contains(text, "build out/tests/test.txt: g.gomodule.binaryTest") {
+		if !strings.Contains(text, "build out/reports/test-out/test.txt: g.gomodule.binaryTest") {
 			t.Errorf("Generated ninja file does not have test build rule")
 		}
-		if !strings.Contains(text, "default out/tests/test.txt") {
+		if !strings.Contains(text, "default out/reports/test-out/test.txt") {
 			t.Errorf("Generated ninja file does not have default out/tests/test.txt statement")
 		}
 		if !strings.Contains(text, "default out/bin/test-out") {
@@ -104,7 +104,7 @@ func TestSimpleTestFactoryOptional(t *testing.T) {
 		if strings.Contains(text, "default out/bin/test-out") {
 			t.Errorf("Generated ninja file with default statement")
 		}
-		if strings.Contains(text, "default out/tests/test.txt") {
+		if strings.Contains(text, "default out/reports/test-out/test.txt") {
 			t.Errorf("Generated ninja file with default statement")
 		}
 	}
