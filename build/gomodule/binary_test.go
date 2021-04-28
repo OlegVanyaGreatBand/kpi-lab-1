@@ -53,3 +53,44 @@ func TestSimpleBinFactory(t *testing.T) {
 		}
 	}
 }
+
+
+func TestSimpleBinFactoryOptional(t *testing.T) {
+	ctx := blueprint.NewContext()
+
+	ctx.MockFileSystem(map[string][]byte{
+		"Blueprints": []byte(`
+			go_binary {
+			  name: "test-out",
+			  srcs: ["test-src.go"],
+			  pkg: ".",
+	          vendorFirst: true,
+              optional: true
+			}
+		`),
+		"test-src.go": nil,
+	})
+
+	ctx.RegisterModuleType("go_binary", SimpleBinFactory)
+
+	cfg := bood.NewConfig()
+
+	_, errs := ctx.ParseBlueprintsFiles(".", cfg)
+	if len(errs) != 0 {
+		t.Fatalf("Syntax errors in the test blueprint file: %s", errs)
+	}
+
+	_, errs = ctx.PrepareBuildActions(cfg)
+	if len(errs) != 0 {
+		t.Errorf("Unexpected errors while preparing build actions: %s", errs)
+	}
+	buffer := new(bytes.Buffer)
+	if err := ctx.WriteBuildFile(buffer); err != nil {
+		t.Errorf("Error writing ninja file: %s", err)
+	} else {
+		text := buffer.String()
+		if strings.Contains(text, "default out/bin/test-out") {
+			t.Errorf("Generated ninja file with default parameter")
+		}
+	}
+}

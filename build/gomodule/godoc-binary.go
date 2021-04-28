@@ -23,6 +23,7 @@ type goDocModuleType struct {
 		// Exclude patterns.
 		SrcsExclude []string
 		Deps        []string
+		Optional 	bool
 	}
 }
 
@@ -56,6 +57,7 @@ func (gd *goDocModuleType) GenerateBuildActions(ctx blueprint.ModuleContext) {
 		Rule:        goDoc,
 		Outputs:     []string{outputPath},
 		Implicits:   buildInputs,
+		Optional: gd.properties.Optional,
 		Args: map[string]string{
 			"workDir":    ctx.ModuleDir(),
 			"pkg":        gd.properties.Pkg,

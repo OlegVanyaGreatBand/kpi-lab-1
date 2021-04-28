@@ -24,6 +24,7 @@ type goTestModuleType struct {
 		TestSrcs    []string
 		VendorFirst bool
 		Deps        []string
+		Optional 	bool
 	}
 }
 
@@ -87,6 +88,7 @@ func (gt *goTestModuleType) GenerateBuildActions(ctx blueprint.ModuleContext) {
 		Rule:        goBuild,
 		Outputs:     []string{outputPath},
 		Implicits:   buildInputs,
+		Optional: gt.properties.Optional,
 		Args: map[string]string{
 			"outputPath": outputPath,
 			"workDir":    ctx.ModuleDir(),
@@ -99,6 +101,7 @@ func (gt *goTestModuleType) GenerateBuildActions(ctx blueprint.ModuleContext) {
 		Rule: goTest,
 		Outputs: []string{testsPath},
 		Implicits: testInputs,
+		Optional: gt.properties.Optional,
 		Args: map[string]string{
 			"workDir": ctx.ModuleDir(),
 			"pkg": gt.properties.TestPkg,
